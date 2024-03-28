@@ -1,98 +1,54 @@
 <script setup lang="ts">
 
-const columns = [{
-  key: 'id',
-  label: 'ID'
-}, {
-  key: 'name',
-  label: 'User name'
-}, {
-  key: 'title',
-  label: 'Job position'
-}, {
-  key: 'email',
-  label: 'Email'
-}, {
-  key: 'role',
-  label: 'Role'
-}]
+const columns = [
+  { key: 'title', label: 'Title'},
+  { key: 'description', label: 'Description'},
+  { key: 'price', label: 'Price'},
+  { key: 'rating', label: 'Rating'},
+  { key: 'brand', label: 'Brand'},
+  { key: 'category', label: 'Category'},
+  { key: 'thumbnail', label: 'Thumbnail'}
+];
 
-const people = [{
-  id: 1,
-  name: 'Lindsay Walton',
-  title: 'Front-end Developer',
-  email: 'lindsay.walton@example.com',
-  role: 'Member'
-}, {
-  id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin'
-}, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member'
-}, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin'
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner'
-}, {
-  id: 6,
-  name: 'Floyd Miles',
-  title: 'Principal Designer',
-  email: 'floyd.miles@example.com',
-  role: 'Member'
-}]
-
-const q = ref('')
+const { data } = await useFetch<any>('https://dummyjson.com/products');
+const products = data.value.products;
+const q = ref('');
+const page = ref(1);
+const pageCount = 4;
+const total = ref(products.length);
 
 const filteredRows = computed(() => {
   if (!q.value) {
-    return people.slice((page.value - 1) * pageCount, (page.value) * pageCount)
+    total.value = products.length;
+    return products.slice((page.value - 1) * pageCount, (page.value) * pageCount);
   }
+  page.value = 1;
+  let result = products.filter((product: any) => {
+    return Object.values(product).some(value =>
+        String(value).toLowerCase().includes(q.value.toLowerCase())
+    );
+  });
+  total.value = result.length;
+  return result.slice((page.value - 1) * pageCount, (page.value) * pageCount);
+});
 
-  return people.filter((person) => {
-    return Object.values(person).some((value) => {
-      return String(value).toLowerCase().includes(q.value.toLowerCase())
-    })
-  })
-})
-
-const page = ref(1)
-const pageCount = 5
-
-const rows = computed(() => {
-  return people.slice((page.value - 1) * pageCount, (page.value) * pageCount)
-})
 </script>
 
 <template>
   <div>
-    <UTable :rows="filteredRows" :columns="columns" />
-
     <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-      <UInput v-model="q" placeholder="Filter people..." />
+      <UInput v-model="q" placeholder="Filter products..."/>
     </div>
-
+    <UTable class="w-full" :ui="{ td: { base: 'mx-auto max-w-[0] truncate' } }" :columns="columns" :rows="filteredRows">
+      <template #thumbnail-data="{ row }">
+        <img class="w-[100px] h-[100px]" :src="row.thumbnail" alt="Thumbnail" />
+      </template>
+      <template #rating-data="{ row }">
+        <span :class="row.rating < 4.5 ? 'text-red-700' : 'text-green-700' ">{{ row.rating }}</span>
+      </template>
+    </UTable>
     <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="people.length" />
+      <UPagination v-model="page" :page-count="pageCount" :total="total" />
     </div>
-
   </div>
 </template>
-
-
-<style scoped>
-
-</style>
