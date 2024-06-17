@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const columns = [
-  {key: 'id', label: '#'},
-  {key: 'user_name', label: 'Автор'},
-  {key: 'category_title', label: 'Категорія'},
-  {key: 'title', label: 'Заголовок'},
-  {key: 'published_at', label: 'Дата публікації'},
-]
+  { key: 'id', label: '#' },
+  { key: 'user_name', label: 'Автор' },
+  { key: 'category_title', label: 'Категорія' },
+  { key: 'title', label: 'Заголовок' },
+  { key: 'published_at', label: 'Дата публікації' },
+];
 const page = ref(1);
 const page_count = 5;
 
@@ -49,15 +49,24 @@ const rows = computed(() => {
 
 const total = computed(() => rows.value.length);
 const paginated_rows = computed(() => {
-      return rows.value.slice((page.value - 1) * page_count, (page.value) * page_count);
-    }
-);
-
+  return rows.value.slice((page.value - 1) * page_count, page.value * page_count);
+});
 </script>
 
 <template>
-  <UTable :columns="columns" :rows="paginated_rows" :total="rows.length" />
-  <div>
-    <UPagination v-model="page" :page-count="page_count" :total="total" />
+  <div class="p-4 bg-gray-50 rounded-lg shadow-md">
+    <UTable :columns="columns" :rows="paginated_rows" :total="rows.length" class="table-auto w-full bg-white rounded-md shadow-sm"/>
+    <div class="mt-4 flex justify-center">
+      <UPagination v-model="page" :page-count="page_count" :total="total" class="pagination"/>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.pagination {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #f9f9f9;
+}
+</style>
