@@ -12,9 +12,12 @@
   "dependencies": {
     "@nuxt/http": "^0.6.4",
     "@nuxt/ui": "^2.14.2",
+    "@nuxtjs/toast": "^3.3.1",
     "@vueuse/nuxt": "^10.9.0",
+    "axios": "^1.7.2",
     "nuxt": "^3.11.1",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "zod": "^3.23.8"
   }
 }
